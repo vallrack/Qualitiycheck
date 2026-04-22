@@ -32,16 +32,28 @@ function getAdminApp() {
     }
   }
 
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+
+  if (!projectId || !clientEmail || !privateKey) {
+    const missing = [];
+    if (!projectId) missing.push('FIREBASE_PROJECT_ID');
+    if (!clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
+    if (!privateKey) missing.push('FIREBASE_PRIVATE_KEY');
+    
+    throw new Error(`[Firebase Admin] Missing required environment variables: ${missing.join(', ')}. Please check your server/Vercel configuration.`);
+  }
+
   try {
     return admin.initializeApp({
       credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey,
+        projectId,
+        clientEmail,
+        privateKey,
       }),
     });
   } catch (error) {
-    console.error('[Firebase Admin] Initialization failed:', error);
+    console.error('[Firebase Admin] Initialization failed with credential object:', error);
     throw error;
   }
 }
