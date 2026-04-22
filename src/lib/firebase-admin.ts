@@ -35,7 +35,15 @@ function getAdminApp() {
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 
+  // Check if we are in the build phase (Next.js build)
+  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build' || process.env.NODE_ENV === 'production' && !projectId;
+
   if (!projectId || !clientEmail || !privateKey) {
+    if (isBuildPhase) {
+      console.warn('[Firebase Admin] Skipping initialization during build phase due to missing environment variables.');
+      return null;
+    }
+    
     const missing = [];
     if (!projectId) missing.push('FIREBASE_PROJECT_ID');
     if (!clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
@@ -53,13 +61,19 @@ function getAdminApp() {
       }),
     });
   } catch (error) {
+    if (isBuildPhase) {
+      console.warn('[Firebase Admin] Initialization failed during build, but continuing...');
+      return null;
+    }
     console.error('[Firebase Admin] Initialization failed with credential object:', error);
     throw error;
   }
 }
 
-const app = getAdminApp()!;
+const app = getAdminApp();
 
-export const db = admin.firestore(app);
-export const auth = admin.auth(app);
+export const db = app ? admin.firestore(app) : null as any;
+export const auth = app ? admin.auth(app) : {
+  verifyIdToken: () => { throw new Error('Firebase Admin not initialized. Check environment variables.'); }
+} as any;
 export default admin;
