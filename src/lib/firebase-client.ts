@@ -15,16 +15,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase for Client side
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const app = getApps().length > 0 
+  ? getApp() 
+  : (process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? initializeApp(firebaseConfig) : null);
 
-// Initialize services
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
+// Initialize services (safely)
+export const db = app ? getFirestore(app) : null as any;
+export const auth = app ? getAuth(app) : null as any;
+export const storage = app ? getStorage(app) : null as any;
 
 // Analytics is only supported in the browser
 export const initAnalytics = async () => {
-  if (typeof window !== 'undefined' && await isSupported()) {
+  if (app && typeof window !== 'undefined' && await isSupported()) {
     return getAnalytics(app);
   }
   return null;
