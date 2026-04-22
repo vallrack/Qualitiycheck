@@ -18,7 +18,7 @@ async function seedPrograms() {
 
     // 2. Identify unique grades/careers from students
     const students = await prisma.student.findMany();
-    const uniqueGrades = Array.from(new Set(students.map(s => s.grade)));
+    const uniqueGrades = Array.from(new Set(students.map((s: any) => s.grade)));
 
     for (const gradeName of uniqueGrades) {
       if (!gradeName) continue;
