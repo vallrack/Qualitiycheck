@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-04-22T20:28:13.018Z",
+  "count": 9,
+  "docs": [
+    {
+      "code": "FR-SIET-01",
+      "title": "Matriz Sistema de Información (SIET)"
+    },
+    {
+      "code": "IATF-16949",
+      "title": "Sistema de Gestión de Calidad (Automotriz/Industrial)"
+    },
+    {
+      "code": "ISO-17025",
+      "title": "Requisitos para Laboratorios de Ensayo"
+    },
+    {
+      "code": "ISO-21001",
+      "title": "Sistema de Gestión Instituciones Educativas"
+    },
+    {
+      "code": "ISO-9001",
+      "title": "Sistema de Gestión de la Calidad (Requisitos Generales)"
+    },
+    {
+      "code": "ISO-9004",
+      "title": "Gestión para el Éxito Sostenido (Mejora Continua)"
+    },
+    {
+      "code": "MEN-R1",
+      "title": "Recurso Ministerial 398980 (Evaluación)"
+    },
+    {
+      "code": "NTC-5555",
+      "title": "Norma NTC 5555: SGC Formación para el Trabajo"
+    },
+    {
+      "code": "NTC-5581",
+      "title": "Norma Técnica Colombiana 5581 (ETDH)"
+    }
+  ]
+}

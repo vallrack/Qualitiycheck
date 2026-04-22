@@ -1,0 +1,297 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  // Note: Connection URL moved to prisma.config.ts for Prisma 7
+}
+
+// Audit Trail for immutable logging (ISO 21001 / Ley 1620)
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String
+  payload   Json?
+  timestamp DateTime @default(now())
+  priority  String   @default("low") // low, medium, high, critical
+
+  @@map("auditlog")
+}
+
+// // Institutional Configuration (Ley 115 / Decreto 1860)
+model Institution {
+  id            String  @id @default(cuid())
+  name          String
+  displayName   String? // White-label commercial name
+  logoUrl       String? // White-label logo image URL
+  nit           String  @unique
+  type          String  @default("FORMAL") // FORMAL, ETDH, or CORPORATE
+  sieeScale     Json?   // Institutional Promotion and Evaluation System scale
+  academicTerms Term[]
+  programs      Program[]
+
+  @@map("institution")
+}
+
+model Program {
+  id            String      @id @default(cuid())
+  name          String      // Ej: "Técnico en Sistemas", "Grado 10"
+  code          String      @unique
+  type          String      @default("FORMAL") // FORMAL o ETDH
+  version       String      @default("V1")
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  students      Student[]
+  subjects      Subject[]
+  surveys       QualitySurvey[]
+  audits        ProgramAudit[]
+  createdAt     DateTime    @default(now())
+
+  @@map("program")
+}
+
+model Term {
+  id            String      @id @default(cuid())
+  name          String
+  startDate     DateTime
+  endDate       DateTime
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+
+  @@map("term")
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  name       String
+  documentId String   @unique
+  grade      String   // Mantener para compatibilidad, pero priorizar programId
+  cohort     String?  // Ficha, Cohorte o Grupo
+  programId  String?
+  program    Program? @relation(fields: [programId], references: [id])
+  cases      ConvivenciaCase[]
+  evaluations Evaluation[]
+  improvementPlans ImprovementPlan[]
+  modality   String   @default("FORMAL") // "FORMAL" o "ETDH"
+  createdAt  DateTime @default(now())
+
+  @@map("student")
+}
+
+// Module: Convivencia (Ley 1620)
+// ... (ConvivenciaCase remains the same)
+model ConvivenciaCase {
+  id                   String   @id @default(cuid())
+  studentId            String
+  student              Student  @relation(fields: [studentId], references: [id])
+  reporterId           String   // UID del docente/admin que reporta
+  type                 Int      // 1, 2, o 3 (Situación Tipo I, II, III)
+  description          String   @db.Text
+  involvedParticipants Json?    // Datos de víctimas/agresores adicionales
+  protocolStatus       Json?    // Checklist de pasos legales completados
+  severity             String   @default("NORMAL") // NORMAL, URGENT, CRITICAL
+  status               String   @default("OPEN") // OPEN, IN_PROGRESS, CLOSED
+  evidence             Json?    // Array de URLs locales
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  closedAt             DateTime?
+
+  @@map("convivenciacase")
+}
+
+// System Notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // UID of the targeted user
+  title     String
+  message   String   @db.Text
+  type      String   @default("INFO") // INFO, WARNING, SUCCESS, ERROR
+  isRead    Boolean  @default(false)
+  link      String?  // Optional URL to navigate to
+  createdAt DateTime @default(now())
+
+  @@map("notification")
+}
+
+// Module: Constructor Curricular (Ley 115 / Decreto 1290 / DBA)
+model SubjectArea {
+  id          String    @id @default(cuid())
+  name        String    @unique // Ej: "Matemáticas", "Ciencias Naturales"
+  code        String    @unique // Ej: "MAT", "CNA"
+  description String?   @db.Text
+  subjects    Subject[]
+  createdAt   DateTime  @default(now())
+
+  @@map("subjectarea")
+}
+
+model Subject {
+  id            String      @id @default(cuid())
+  name          String      // Ej: "Álgebra", "Biología"
+  grade         String      // Ej: "6", "7", "8", "9", "10", "11"
+  weeklyHours   Int         @default(4)
+  areaId        String
+  area          SubjectArea @relation(fields: [areaId], references: [id])
+  programId     String?
+  program       Program?    @relation(fields: [programId], references: [id])
+  plans         CurriculumPlan[]
+  evaluations   Evaluation[]
+  improvementPlans ImprovementPlan[]
+  teachers      User[]
+  createdAt     DateTime    @default(now())
+
+  @@unique([name, grade, programId])
+  @@map("subject")
+}
+
+// ... (CurriculumPlan, Evaluation, ImprovementPlan, User, QualityDocument remain the same)
+model CurriculumPlan {
+  id              String   @id @default(cuid())
+  subjectId       String
+  subject         Subject  @relation(fields: [subjectId], references: [id])
+  period          Int      // 1, 2, 3, 4 (períodos académicos)
+  dbaReference    String?  // Código DBA oficial del MEN
+  competency      String   @db.Text // Competencia / Logro
+  indicator       String?  @db.Text // Indicador de desempeño
+  methodology     String?  @db.Text // Estrategia metodológica
+  evaluationCriteria String? @db.Text // Criterios de evaluación
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("curriculumplan")
+}
+
+model Evaluation {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id])
+  subjectId       String
+  subject         Subject  @relation(fields: [subjectId], references: [id])
+  period          Int      // 1, 2, 3, 4
+  cognitiveScore  Float    @default(0.0) // Dimensión Cognitiva
+  personalScore   Float    @default(0.0) // Dimensión Personal
+  socialScore     Float    @default(0.0) // Dimensión Social
+  finalScore      Float    @default(0.0) // Nota Final
+  observations    String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([studentId, subjectId, period]) // Un estudiante solo tiene una nota final por periodo por materia
+  @@map("evaluation")
+}
+
+model ImprovementPlan {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  subjectId   String?  // Asignatura de referencia (opcional)
+  subject     Subject? @relation(fields: [subjectId], references: [id])
+
+  // PHVA Cycle
+  planear     String   @db.Text  // Diagnóstico y metas
+  hacer       String   @db.Text  // Actividades de mejoramiento
+  verificar   String?  @db.Text  // Indicadores de seguimiento
+  actuar      String?  @db.Text  // Ajustes y compromisos finales
+
+  // Metadata
+  period      Int      @default(1)
+  status      String   @default("ACTIVO")   // ACTIVO, EN_SEGUIMIENTO, CERRADO
+  priority    String   @default("NORMAL")   // NORMAL, ALTA, CRITICA
+  dueDate     DateTime?
+  closedAt    DateTime?
+  createdBy   String   @default("COORDINACION")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("improvementplan")
+}
+
+model User {
+  id        String   @id // Firebase UID
+  email     String   @unique
+  name      String
+  role      String   @default("DOCENTE") // ADMIN, COORDINADOR, DOCENTE
+  subjects  Subject[] // Solo aplica para DOCENTE (materias que dicta)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user")
+}
+
+model QualityDocument {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  title        String
+  version      String   @default("V1")
+  status       String   @default("VIGENTE") // VIGENTE, EN_REVISION, OBSOLETO
+  area         String   @default("Gestión de Calidad")
+  physicalPath String?  // Ruta hacia el PDF físico en /normas
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("qualitydocument")
+}
+
+// NUEVOS MODELOS PARA EVALUACIÓN DE PROGRAMA & CALIDAD (NTC 5555 / 5581)
+
+model QualitySurvey {
+  id           String   @id @default(cuid())
+  programId    String
+  program      Program  @relation(fields: [programId], references: [id])
+  target       String   // ESTUDIANTE, DOCENTE, ACUDIENTE, EGRESADO
+  averageScore Float    // Resultado de satisfacción (0.0 - 5.0)
+  sampleSize   Int      // Número de encuestados
+  findings     String?  @db.Text
+  date         DateTime @default(now())
+
+  @@map("qualitysurvey")
+}
+
+model ProgramAudit {
+  id          String   @id @default(cuid())
+  programId   String
+  program     Program  @relation(fields: [programId], references: [id])
+  standard    String   // ISO 21001, NTC 5555, NTC 5581
+  score       Float    // Porcentaje de cumplimiento
+  findings    Json?    // Hallazgos detallados (Fortalezas, No Conformidades)
+  actionPlan  String?  @db.Text // Plan de mejora institucional derivado
+  auditorId   String?  // UID del auditor o "ANTIGRAVITY_AI"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("programaudit")
+}
+
+// ── Sistema de Encuestas de Satisfacción (ISO 21001 / NTC 5555) ──────────────
+
+model SurveyForm {
+  id          String           @id @default(cuid())
+  title       String
+  description String?          @db.Text
+  questions   Json             // Array de { id, text, type: 'rating'|'text'|'yesno', required }
+  target      String           @default("ESTUDIANTE") // ESTUDIANTE, DOCENTE, ACUDIENTE, EGRESADO
+  slug        String           @unique // URL pública, ej: "satisfaccion-2024"
+  isActive    Boolean          @default(true)
+  programId   String?
+  createdAt   DateTime         @default(now())
+  responses   SurveyResponse[]
+
+  @@map("surveyform")
+}
+
+model SurveyResponse {
+  id         String     @id @default(cuid())
+  surveyId   String
+  survey     SurveyForm @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answers    Json       // { questionId: value }
+  source     String     @default("ONLINE") // ONLINE | EXCEL_IMPORT
+  createdAt  DateTime   @default(now())
+
+  @@map("surveyresponse")
+}
+

@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+
+  --color-brand-red: #E30613;
+  --color-brand-yellow: #FFC600;
+  --color-brand-blue: #425563;
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+:root {
+  /* Ciudad Don Bosco - Light Institutional Palette */
+  --primary: 0 92% 46%; /* #E30613 - Red */
+  --secondary: 47 100% 50%; /* #FFC600 - Yellow */
+  --accent: 206 20% 33%; /* #425563 - Professional Gray */
+  
+  --background: 0 0% 100%; /* Pure White */
+  --foreground: 224 71% 4%;
+  
+  --border: 220 13% 91%;
+  --radius: 1rem;
+  
+  /* Refined Shadows for Light Theme */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 12px 24px -4px rgb(0 0 0 / 0.08);
+}
+
+@layer base {
+  * {
+    @apply border-[hsl(var(--border))];
+  }
+  body {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+    font-family: var(--font-sans);
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(var(--primary), 0.02) 0, transparent 40%),
+      radial-gradient(at 100% 100%, hsla(var(--accent), 0.02) 0, transparent 40%);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-[hsl(var(--accent))];
+    font-family: var(--font-outfit);
+  }
+}
+
+@layer components {
+  .glass-ui {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-md;
+  }
+  
+  .btn-premium {
+    @apply bg-red-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:bg-red-700 hover:shadow-red-600/20 hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-2;
+  }
+
+  .card-premium {
+    @apply bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all;
+  }
+}
+
+/* Intelligent Dark Mode (Zero-Stress Re-theme) */
+:root[data-theme='dark'] {
+  filter: invert(0.9) hue-rotate(180deg);
+  background: #111;
+}
+
+:root[data-theme='dark'] img,
+:root[data-theme='dark'] video,
+:root[data-theme='dark'] .no-invert {
+  filter: invert(1.1) hue-rotate(-180deg);
+}
