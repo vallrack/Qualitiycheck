@@ -295,3 +295,17 @@ model SurveyResponse {
   @@map("surveyresponse")
 }
 
+model QualityEvidence {
+  id               String   @id @default(cuid())
+  title            String
+  type             String   // Manual, Acta, Plan, Informe, etc.
+  contentExtracted String   @db.LongText
+  standard         String   // ISO 21001, NTC 5555, NTC 5581
+  complianceScore  Float
+  aiAnalysis       Json     // { summary: string, findings: string[], recommendations: string[] }
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("qualityevidence")
+}
+

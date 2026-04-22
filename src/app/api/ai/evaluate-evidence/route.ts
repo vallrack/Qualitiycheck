@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateRole } from '@/lib/user-auth';
-import { prisma } from '@/lib/db/prisma';
+import { validateRole } from '../../../../lib/user-auth';
+import { prisma } from '../../../../lib/db/prisma';
 
 export async function POST(req: NextRequest) {
   const { authenticated, authorized } = await validateRole(['ADMIN', 'COORDINADOR']);
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     };
 
     // Save the record in the database
-    const evidenceRecord = await prisma.qualityEvidence.create({
+    const evidenceRecord = await (prisma as any).qualityEvidence.create({
       data: {
         title,
         type,
