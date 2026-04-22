@@ -99,7 +99,7 @@ export async function GET() {
     } catch (dbError) {
       console.warn('[HA] MariaDB falló en GET /api/convivencia. Usando Firebase de respaldo...', dbError);
       const snapshot = await firestore.collection('convivencia_cases').orderBy('createdAt', 'desc').get();
-      cases = snapshot.docs.map(doc => {
+      cases = snapshot.docs.map((doc: any) => {
         const data = doc.data();
         return {
           id: doc.id,
