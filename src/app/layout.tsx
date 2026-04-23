@@ -30,6 +30,8 @@ export default function RootLayout({
         <AuthProvider>
           {children}
         </AuthProvider>
+        {/* Puter.js - Free AI access (GPT-4o) directly in the browser */}
+        <script src="https://js.puter.com/v2/" defer></script>
       </body>
     </html>
   );

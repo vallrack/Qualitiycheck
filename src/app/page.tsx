@@ -30,7 +30,7 @@ export default function LandingPage() {
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
           className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-gradient-to-tl from-slate-300/30 to-transparent rounded-full blur-[140px]" 
         />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20 mix-blend-overlay"></div>
       </div>
 
       {/* Glassmorphism Header */}

@@ -25,6 +25,8 @@ import {
   X,
   Moon,
   Sun,
+  Target,
+  Brain,
   GraduationCap as GraduationCapIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -48,6 +50,9 @@ import QualityDocumentModule from '@/components/dashboard/QualityDocumentModule'
 import QualityEvaluationModule from '@/components/dashboard/QualityEvaluationModule';
 import EvidenceAuditModule from '@/components/dashboard/EvidenceAuditModule';
 import SurveyModule from '@/components/dashboard/SurveyModule';
+import DofaModule from '@/components/dashboard/DofaModule';
+import KpiModule from '@/components/dashboard/KpiModule';
+import DocumentIntelligence from '@/components/dashboard/DocumentIntelligence';
 import { generateConvivenciaAct } from '@/lib/pdf-export';
 
 export default function DashboardPage() {
@@ -163,6 +168,30 @@ export default function DashboardPage() {
         { title: 'Evidencia para Auditorías', text: 'Este panel sirve como evidencia oficial ante ICONTEC o la Secretaría de Educación.' },
       ]
     },
+    'Matriz DOFA': {
+      title: 'Análisis Estratégico (SWOT)',
+      items: [
+        { title: 'Cuadrantes', text: 'Define Fortalezas, Oportunidades, Debilidades y Amenazas para el análisis de contexto ISO 21001.' },
+        { title: 'Importación', text: 'Carga tus análisis existentes desde archivos Excel o Word directamente.' },
+        { title: 'Categorización', text: 'Clasifica cada factor por área (Académica, Administrativa) para reportes detallados.' },
+      ]
+    },
+    'Gestión de KPIs': {
+      title: 'Tablero de Indicadores Clave',
+      items: [
+        { title: 'Niveles', text: 'Configura KPIs Institucionales, por Área o Personales para un seguimiento en cascada.' },
+        { title: 'Metas', text: 'Define valores objetivo y monitorea el progreso en tiempo real con gráficos de tendencia.' },
+        { title: 'Historial', text: 'Registra avances periódicos y mantén un registro inmutable del desempeño de calidad.' },
+      ]
+    },
+    'Inteligencia Documental': {
+      title: 'Cerebro de Gestión IA',
+      items: [
+        { title: 'Clasificación', text: 'Sube cualquier archivo y la IA identificará si es un acta, informe o manual automáticamente.' },
+        { title: 'Extracción', text: 'Extrae métricas, KPIs y planes de acción directamente del texto del documento.' },
+        { title: 'Sincronización', text: 'Los datos hallados pueden sincronizarse con tus tableros de control con un solo clic.' },
+      ]
+    },
   };
 
   const handleLogout = () => {
@@ -270,6 +299,9 @@ export default function DashboardPage() {
     { label: 'Evaluación SIEE', icon: BarChart3, roles: ['ADMIN', 'COORDINADOR', 'DOCENTE'], type: 'EDU' },
     { label: 'Ciclo PHVA', icon: RefreshCwIcon, roles: ['ADMIN', 'COORDINADOR'], type: 'EDU' },
     { label: 'Evaluación de Calidad', icon: ShieldCheck, roles: ['ADMIN', 'COORDINADOR'], type: 'ALL' },
+    { label: 'Matriz DOFA', icon: Target, roles: ['ADMIN', 'COORDINADOR'], type: 'ALL' },
+    { label: 'Inteligencia Documental', icon: Brain, roles: ['ADMIN', 'COORDINADOR'], type: 'ALL' },
+    { label: 'Métricas e Indicadores', icon: BarChart3, roles: ['ADMIN', 'COORDINADOR', 'DOCENTE'], type: 'ALL' },
     { label: 'Encuestas', icon: Bell, roles: ['ADMIN', 'COORDINADOR'], type: 'ALL' },
     { label: 'Gestión Documental', icon: FileText, roles: ['ADMIN', 'COORDINADOR'], type: 'ALL' },
     { label: 'Gestión de Usuarios', icon: UserIcon, roles: ['ADMIN'], type: 'ALL' },
@@ -771,7 +803,7 @@ export default function DashboardPage() {
               </div>
               <ConvivenciaModule />
             </motion.div>
-          ) : activeTab === 'Ciclo PHVA' || activeTab === 'Evaluación de Calidad' || activeTab === 'Gestión Documental' || activeTab === 'Auditoría IA' || activeTab === 'Encuestas' ? (
+          ) : activeTab === 'Ciclo PHVA' || activeTab === 'Evaluación de Calidad' || activeTab === 'Gestión Documental' || activeTab === 'Auditoría IA' || activeTab === 'Encuestas' || activeTab === 'Matriz DOFA' || activeTab === 'Métricas e Indicadores' || activeTab === 'Inteligencia Documental' ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -782,6 +814,9 @@ export default function DashboardPage() {
               {activeTab === 'Gestión Documental' && <QualityDocumentModule />}
               {activeTab === 'Auditoría IA' && <EvidenceAuditModule />}
               {activeTab === 'Encuestas' && <SurveyModule />}
+              {activeTab === 'Matriz DOFA' && <DofaModule />}
+              {activeTab === 'Métricas e Indicadores' && <KpiModule />}
+              {activeTab === 'Inteligencia Documental' && <DocumentIntelligence onTabChange={setActiveTab} />}
             </motion.div>
           ) : activeTab === 'Configuración' ? (
             <motion.div

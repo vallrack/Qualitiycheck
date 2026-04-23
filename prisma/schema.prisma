@@ -309,3 +309,45 @@ model QualityEvidence {
   @@map("qualityevidence")
 }
 
+
+model DofaItem {
+  id          String   @id @default(cuid())
+  type        String   // FORTALEZA, DEBILIDAD, OPORTUNIDAD, AMENAZA
+  description String   @db.Text
+  category    String   @default("GENERAL") // ACADEMICO, ADMINISTRATIVO, CONVIVENCIA, etc.
+  priority    String   @default("NORMAL")  // BAJA, NORMAL, ALTA
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("dofaitem")
+}
+
+model Kpi {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?    @db.Text
+  targetValue  Float
+  currentValue Float      @default(0)
+  unit         String     // %, $, count, etc.
+  frequency    String     @default("MENSUAL") // MENSUAL, TRIMESTRAL, ANUAL
+  level        String     @default("INSTITUCIONAL") // INSTITUCIONAL, AREA, PERSONAL
+  area         String?    // Nombre del área o departamento
+  userId       String?    // UID del responsable (opcional)
+  history      KpiValue[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("kpi")
+}
+
+model KpiValue {
+  id        String   @id @default(cuid())
+  kpiId     String
+  kpi       Kpi      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  value     Float
+  period    DateTime @default(now())
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("kpivalue")
+}
