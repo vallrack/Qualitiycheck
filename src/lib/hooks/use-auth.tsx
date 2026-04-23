@@ -2,11 +2,12 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
-  onAuthStateChanged, 
+  onIdTokenChanged, 
   User,
   signOut as firebaseSignOut
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase-client';
+import Cookies from 'js-cookie';
 
 interface AuthContextType {
   user: User | null;
@@ -25,8 +26,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onIdTokenChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Automatically sync the fresh token into the cookie
+        const token = await currentUser.getIdToken();
+        Cookies.set('session', token, { expires: 1, secure: process.env.NODE_ENV === 'production' });
+        setUser(currentUser);
+      } else {
+        Cookies.remove('session');
+        setUser(null);
+      }
       setLoading(false);
     });
 
