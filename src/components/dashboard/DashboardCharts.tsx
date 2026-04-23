@@ -11,17 +11,26 @@ import { Users, FileWarning, TrendingUp, AlertTriangle, Loader2 } from 'lucide-r
 export default function DashboardCharts() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch('/api/stats');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+        
+        const res = await fetch('/api/stats', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
         if (res.ok) {
           const data = await res.json();
           setStats(data);
+        } else {
+          setError(`Error HTTP: ${res.status}`);
         }
-      } catch (error) {
-        console.error("Error fetching stats:", error);
+      } catch (err: any) {
+        console.error("Error fetching stats:", err);
+        setError(err.name === 'AbortError' ? 'Tiempo de espera agotado al conectar con la base de datos' : err.message);
       } finally {
         setLoading(false);
       }
@@ -38,7 +47,15 @@ export default function DashboardCharts() {
     );
   }
 
-  if (!stats) return null;
+  if (error || !stats) {
+    return (
+      <div className="h-64 rounded-[3rem] border border-red-200 bg-red-50 flex flex-col items-center justify-center text-red-500">
+        <AlertTriangle className="mb-4" size={32} />
+        <span className="text-xs font-black uppercase tracking-widest mb-2">Error de Conexión</span>
+        <span className="text-[10px] font-bold text-red-400 text-center max-w-xs">{error || 'No se pudieron cargar las estadísticas'}</span>
+      </div>
+    );
+  }
 
   const COLORS = {
     NORMAL: '#0f172a',
