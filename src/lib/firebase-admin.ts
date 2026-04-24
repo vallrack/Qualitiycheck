@@ -36,7 +36,10 @@ function getAdminApp() {
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 
   // Check if we are in the build phase (Next.js build)
-  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build' || process.env.NODE_ENV === 'production' && !projectId;
+  const isBuildPhase = 
+    process.env.NEXT_PHASE === 'phase-production-build' || 
+    process.env.CI === 'true' || 
+    (process.env.NODE_ENV === 'production' && !projectId);
 
   if (!projectId || !clientEmail || !privateKey) {
     if (isBuildPhase) {
