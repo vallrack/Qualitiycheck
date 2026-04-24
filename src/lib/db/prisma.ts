@@ -24,9 +24,18 @@ const createPrismaClient = () => {
     }
   }
 
+  // Check for build phase to avoid initialization errors
+  const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.CI === 'true';
+
   // Fallback to native client if URL exists but adapter fails or for other protocols
   if (process.env.NODE_ENV === 'production' && dbUrl) {
     return new PrismaClient();
+  }
+
+  // Handle build phase or missing DB URL
+  if (isBuild || !dbUrl) {
+    console.warn('[Prisma] Skipping full initialization during build phase or missing DATABASE_URL.');
+    return new PrismaClient(); // Return a client that won't be used during build
   }
 
   // Fallback for local development
