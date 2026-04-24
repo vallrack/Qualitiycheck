@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateRole } from '../../../../lib/user-auth';
 import { prisma } from '../../../../lib/db/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const { authenticated, authorized } = await validateRole(['ADMIN', 'COORDINADOR']);
   if (!authenticated || !authorized) {

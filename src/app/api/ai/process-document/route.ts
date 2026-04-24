@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateRole } from '@/lib/user-auth';
 import { fullDocumentAnalysis } from '@/lib/ai-service';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const { authenticated } = await validateRole(['ADMIN', 'COORDINADOR']);
   if (!authenticated) {

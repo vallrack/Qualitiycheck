@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { validateRole } from '@/lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 // Simulated AI endpoint for generating Convivencia Improvement Plans.
 // In a real production scenario, this would call OpenAI (GPT-4) or Anthropic (Claude).
 export async function POST(req: Request) {
