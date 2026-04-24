@@ -5,6 +5,8 @@ import admin, { db as firestore } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { validateRole } from '@/lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 const convivenciaSchema = z.object({
   studentId: z.string().min(1),
   reporterId: z.string().min(1),

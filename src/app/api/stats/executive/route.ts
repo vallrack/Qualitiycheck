@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { validateRole } from '@/lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   // Solo administradores y coordinadores pueden ver el dashboard ejecutivo
   const { authenticated, authorized } = await validateRole(['ADMIN', 'COORDINADOR']);

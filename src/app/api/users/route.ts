@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db/prisma';
 import { getServerSession } from '@/lib/user-auth';
 import { logAction } from '@/lib/audit-logger';
 
+export const dynamic = 'force-dynamic';
+
 // GET: List institutional users
 export async function GET() {
   const session = await getServerSession();

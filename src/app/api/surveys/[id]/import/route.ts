@@ -3,6 +3,8 @@ import { prisma } from '../../../../../lib/db/prisma';
 import { getServerSession } from '../../../../../lib/user-auth';
 import * as XLSX from 'xlsx';
 
+export const dynamic = 'force-dynamic';
+
 // POST /api/surveys/[id]/import — import responses from Excel (admin)
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession();

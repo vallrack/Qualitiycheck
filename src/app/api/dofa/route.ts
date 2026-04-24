@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { validateRole } from '@/lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const { authenticated } = await validateRole(['ADMIN', 'COORDINADOR', 'DOCENTE']);
   if (!authenticated) {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/db/prisma';
 import { getServerSession } from '../../../../lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/surveys/[id] — get survey by id or slug (public, no auth)
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

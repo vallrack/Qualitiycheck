@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db/prisma';
 import { validateRole } from '@/lib/user-auth';
 import { logAction } from '@/lib/audit-logger';
 
+export const dynamic = 'force-dynamic';
+
 import fs from 'fs';
 import path from 'path';
 

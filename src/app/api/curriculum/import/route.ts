@@ -5,6 +5,8 @@ import admin, { db as firestore } from '@/lib/firebase-admin';
 import { logAction } from '@/lib/audit-logger';
 import { getServerSession } from '@/lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   const session = await getServerSession();
   if (!session) {

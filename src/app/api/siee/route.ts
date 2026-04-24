@@ -4,6 +4,8 @@ import admin, { db as firestore } from '@/lib/firebase-admin';
 import { logAction } from '@/lib/audit-logger';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const evaluationSchema = z.object({
   studentId: z.string().min(1),
   subjectId: z.string().min(1),

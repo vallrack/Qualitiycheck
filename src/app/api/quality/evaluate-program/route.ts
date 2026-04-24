@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db/prisma';
 import { AIOrchestrator } from '@/lib/ai/orchestrator';
 import { validateRole } from '@/lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const { authenticated, authorized } = await validateRole(['ADMIN', 'COORDINADOR']);
   if (!authenticated || !authorized) {

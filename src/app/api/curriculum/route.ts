@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const areaSchema = z.object({
   name: z.string().min(2),
   code: z.string().min(2).max(5),

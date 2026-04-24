@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db/prisma';
 import { validateRole } from '@/lib/user-auth';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const notifSchema = z.object({
   userId: z.string().min(1),
   title: z.string().min(1),

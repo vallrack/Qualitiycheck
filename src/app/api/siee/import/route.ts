@@ -4,6 +4,8 @@ import * as XLSX from 'xlsx';
 import admin, { db as firestore } from '@/lib/firebase-admin';
 import { logAction } from '@/lib/audit-logger';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();

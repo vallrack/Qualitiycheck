@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db/prisma';
 import { getServerSession } from '@/lib/user-auth';
 import { auth as adminAuth } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const session = await getServerSession();
   

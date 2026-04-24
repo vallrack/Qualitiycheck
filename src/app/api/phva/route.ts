@@ -4,6 +4,8 @@ import { logAction } from '@/lib/audit-logger';
 import { validateRole } from '@/lib/user-auth';
 import admin, { db as firestore } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 // GET: List plans (with at-risk students summary)
 export async function GET(req: Request) {
   const { authenticated, authorized } = await validateRole(['ADMIN', 'COORDINADOR']);

@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db/prisma';
 import admin, { db as firestore } from '@/lib/firebase-admin';
 import { logAction } from '@/lib/audit-logger';
 
+export const dynamic = 'force-dynamic';
+
 // PATCH: Update case status, add resolution or sanction
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {

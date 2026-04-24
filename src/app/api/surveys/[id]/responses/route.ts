@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../../lib/db/prisma';
 import { getServerSession } from '../../../../../lib/user-auth';
 
+export const dynamic = 'force-dynamic';
+
 // Forzamos el tipado para que el IDE reconozca los nuevos modelos
 type SurveyWithResponses = any;
 
